@@ -3,478 +3,337 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KidLearn 🎓</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<title>KidLearn \ud83c\udf93</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Righteous&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'Nunito',sans-serif;background:#f0f8ff;}
-  ::-webkit-scrollbar{width:4px;}
-  ::-webkit-scrollbar-track{background:transparent;}
-  ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:4px;}
-  @keyframes float{from{transform:translateY(0);}to{transform:translateY(-10px);}}
-  @keyframes slideUp{from{transform:translateX(-50%) translateY(20px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
-  @keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.18);}100%{transform:scale(1);}}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#f0f8ff;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:4px;}
+@keyframes float{from{transform:translateY(0);}to{transform:translateY(-12px);}}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(20px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@keyframes glow{0%,100%{text-shadow:0 0 10px #fff,0 0 30px #a78bfa,0 0 60px #a78bfa;}50%{text-shadow:0 0 20px #fff,0 0 50px #c4b5fd,0 0 100px #7c3aed;}}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(1.3);}}
+@keyframes pop{0%{transform:scale(1);}40%{transform:scale(1.2);}100%{transform:scale(1);}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.glow-text{animation:glow 2.5s ease-in-out infinite;}
+.dot-blink{animation:blink 1.5s ease-in-out infinite;}
+.fade-in{animation:fadeIn 0.4s ease both;}
 </style>
 </head>
 <body>
 <div id="root"></div>
-
 <script type="text/babel">
-const { useState, useEffect } = React;
+const { useState, useEffect, useCallback } = React;
 
-// ══════════════════════════════════════
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+// AUDIO ENGINE
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+let _ctx=null;
+function ac(){if(!_ctx)_ctx=new(window.AudioContext||window.webkitAudioContext)();return _ctx;}
+function playClick(){try{const c=ac(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(700,c.currentTime);o.frequency.exponentialRampToValueAtTime(350,c.currentTime+0.08);g.gain.setValueAtTime(0.22,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.1);o.start();o.stop(c.currentTime+0.1);}catch(e){}}
+function playSuccess(){try{const c=ac();[523,659,784,1047].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;g.gain.setValueAtTime(0.18,c.currentTime+i*0.1);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.1+0.15);o.start(c.currentTime+i*0.1);o.stop(c.currentTime+i*0.1+0.15);});}catch(e){}}
+function playError(){try{const c=ac(),o=c.createOscillator(),g=c.createGain();o.type="sawtooth";o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(280,c.currentTime);o.frequency.exponentialRampToValueAtTime(130,c.currentTime+0.22);g.gain.setValueAtTime(0.25,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.22);o.start();o.stop(c.currentTime+0.22);}catch(e){}}
+let _music=null;
+const MELODY=[261,293,329,392,440,392,349,329,293,261,293,329,349,392,440,523];
+let _mBeat=0;
+function startMusic(){
+  if(_music)return;
+  try{
+    const c=ac(),master=c.createGain();master.gain.value=0.04;master.connect(c.destination);
+    function tick(){
+      const o=c.createOscillator(),g=c.createGain();
+      o.type="triangle";o.frequency.value=MELODY[_mBeat%MELODY.length];
+      o.connect(g);g.connect(master);
+      g.gain.setValueAtTime(0.9,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.42);
+      o.start();o.stop(c.currentTime+0.45);
+      _mBeat++;
+    }
+    tick();
+    const id=setInterval(tick,480);
+    _music={id,master};
+  }catch(e){}
+}
+function stopMusic(){if(!_music)return;try{clearInterval(_music.id);_music.master.gain.exponentialRampToValueAtTime(0.001,ac().currentTime+0.3);}catch(e){}_music=null;}
+
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+// LOCAL STORAGE \u2014 \u062d\u0641\u0638 \u0627\u0644\u062a\u0642\u062f\u0645
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+const STORE_KEY="kidlearn_progress_v2";
+function loadProgress(){
+  try{const d=localStorage.getItem(STORE_KEY);return d?JSON.parse(d):{};}catch(e){return {};}
+}
+function saveProgress(p){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(p));}catch(e){}
+}
+// p = { categoryId: { stars:0-3, bestScore:0-10, plays:0 } }
+
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 // DATA
-// ══════════════════════════════════════
-const DATA = {
-  numbers: [
-    {id:1,emoji:"1️⃣",en:"One",fr:"Un",num:"1"},
-    {id:2,emoji:"2️⃣",en:"Two",fr:"Deux",num:"2"},
-    {id:3,emoji:"3️⃣",en:"Three",fr:"Trois",num:"3"},
-    {id:4,emoji:"4️⃣",en:"Four",fr:"Quatre",num:"4"},
-    {id:5,emoji:"5️⃣",en:"Five",fr:"Cinq",num:"5"},
-    {id:6,emoji:"6️⃣",en:"Six",fr:"Six",num:"6"},
-    {id:7,emoji:"7️⃣",en:"Seven",fr:"Sept",num:"7"},
-    {id:8,emoji:"8️⃣",en:"Eight",fr:"Huit",num:"8"},
-    {id:9,emoji:"9️⃣",en:"Nine",fr:"Neuf",num:"9"},
-    {id:10,emoji:"🔟",en:"Ten",fr:"Dix",num:"10"},
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+const DATA={
+  numbers:[
+    {id:1,emoji:"1\ufe0f\u20e3",en:"One",fr:"Un",num:"1"},
+    {id:2,emoji:"2\ufe0f\u20e3",en:"Two",fr:"Deux",num:"2"},
+    {id:3,emoji:"3\ufe0f\u20e3",en:"Three",fr:"Trois",num:"3"},
+    {id:4,emoji:"4\ufe0f\u20e3",en:"Four",fr:"Quatre",num:"4"},
+    {id:5,emoji:"5\ufe0f\u20e3",en:"Five",fr:"Cinq",num:"5"},
+    {id:6,emoji:"6\ufe0f\u20e3",en:"Six",fr:"Six",num:"6"},
+    {id:7,emoji:"7\ufe0f\u20e3",en:"Seven",fr:"Sept",num:"7"},
+    {id:8,emoji:"8\ufe0f\u20e3",en:"Eight",fr:"Huit",num:"8"},
+    {id:9,emoji:"9\ufe0f\u20e3",en:"Nine",fr:"Neuf",num:"9"},
+    {id:10,emoji:"\ud83d\udd1f",en:"Ten",fr:"Dix",num:"10"},
   ],
   letters:"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l,i)=>({
     id:i+1,emoji:l,en:l,fr:l,num:l,
     phonetic_fr:{A:"Ah",B:"Bay",C:"Say",D:"Day",E:"Euh",F:"Eff",G:"Zhay",H:"Ash",I:"Ee",J:"Zhee",K:"Kah",L:"El",M:"Em",N:"En",O:"Oh",P:"Pay",Q:"Koo",R:"Err",S:"Ess",T:"Tay",U:"Oo",V:"Vay",W:"Dooblvay",X:"Eeks",Y:"Ee-grek",Z:"Zed"}[l],
   })),
   animals:[
-    {id:1,emoji:"🐶",en:"Dog",fr:"Chien"},
-    {id:2,emoji:"🐱",en:"Cat",fr:"Chat"},
-    {id:3,emoji:"🐘",en:"Elephant",fr:"Éléphant"},
-    {id:4,emoji:"🦁",en:"Lion",fr:"Lion"},
-    {id:5,emoji:"🐬",en:"Dolphin",fr:"Dauphin"},
-    {id:6,emoji:"🐦",en:"Bird",fr:"Oiseau"},
-    {id:7,emoji:"🐠",en:"Fish",fr:"Poisson"},
-    {id:8,emoji:"🐰",en:"Rabbit",fr:"Lapin"},
-    {id:9,emoji:"🐻",en:"Bear",fr:"Ours"},
-    {id:10,emoji:"🦊",en:"Fox",fr:"Renard"},
-    {id:11,emoji:"🐷",en:"Pig",fr:"Cochon"},
-    {id:12,emoji:"🦋",en:"Butterfly",fr:"Papillon"},
-    {id:13,emoji:"🐸",en:"Frog",fr:"Grenouille"},
-    {id:14,emoji:"🐧",en:"Penguin",fr:"Pingouin"},
-    {id:15,emoji:"🦒",en:"Giraffe",fr:"Girafe"},
+    {id:1,emoji:"\ud83d\udc36",en:"Dog",fr:"Chien"},{id:2,emoji:"\ud83d\udc31",en:"Cat",fr:"Chat"},
+    {id:3,emoji:"\ud83d\udc18",en:"Elephant",fr:"\u00c9l\u00e9phant"},{id:4,emoji:"\ud83e\udd81",en:"Lion",fr:"Lion"},
+    {id:5,emoji:"\ud83d\udc2c",en:"Dolphin",fr:"Dauphin"},{id:6,emoji:"\ud83d\udc26",en:"Bird",fr:"Oiseau"},
+    {id:7,emoji:"\ud83d\udc20",en:"Fish",fr:"Poisson"},{id:8,emoji:"\ud83d\udc30",en:"Rabbit",fr:"Lapin"},
+    {id:9,emoji:"\ud83d\udc3b",en:"Bear",fr:"Ours"},{id:10,emoji:"\ud83e\udd8a",en:"Fox",fr:"Renard"},
+    {id:11,emoji:"\ud83d\udc37",en:"Pig",fr:"Cochon"},{id:12,emoji:"\ud83e\udd8b",en:"Butterfly",fr:"Papillon"},
+    {id:13,emoji:"\ud83d\udc38",en:"Frog",fr:"Grenouille"},{id:14,emoji:"\ud83d\udc27",en:"Penguin",fr:"Pingouin"},
+    {id:15,emoji:"\ud83e\udd92",en:"Giraffe",fr:"Girafe"},
   ],
   food:[
-    {id:1,emoji:"🍎",en:"Apple",fr:"Pomme"},
-    {id:2,emoji:"🍌",en:"Banana",fr:"Banane"},
-    {id:3,emoji:"🍊",en:"Orange",fr:"Orange"},
-    {id:4,emoji:"🍇",en:"Grapes",fr:"Raisin"},
-    {id:5,emoji:"🍓",en:"Strawberry",fr:"Fraise"},
-    {id:6,emoji:"🥕",en:"Carrot",fr:"Carotte"},
-    {id:7,emoji:"🥦",en:"Broccoli",fr:"Brocoli"},
-    {id:8,emoji:"🍅",en:"Tomato",fr:"Tomate"},
-    {id:9,emoji:"🥔",en:"Potato",fr:"Pomme de terre"},
-    {id:10,emoji:"🌽",en:"Corn",fr:"Maïs"},
-    {id:11,emoji:"🍋",en:"Lemon",fr:"Citron"},
-    {id:12,emoji:"🥝",en:"Kiwi",fr:"Kiwi"},
-    {id:13,emoji:"🍉",en:"Watermelon",fr:"Pastèque"},
-    {id:14,emoji:"🥑",en:"Avocado",fr:"Avocat"},
-    {id:15,emoji:"🍍",en:"Pineapple",fr:"Ananas"},
+    {id:1,emoji:"\ud83c\udf4e",en:"Apple",fr:"Pomme"},{id:2,emoji:"\ud83c\udf4c",en:"Banana",fr:"Banane"},
+    {id:3,emoji:"\ud83c\udf4a",en:"Orange",fr:"Orange"},{id:4,emoji:"\ud83c\udf47",en:"Grapes",fr:"Raisin"},
+    {id:5,emoji:"\ud83c\udf53",en:"Strawberry",fr:"Fraise"},{id:6,emoji:"\ud83e\udd55",en:"Carrot",fr:"Carotte"},
+    {id:7,emoji:"\ud83e\udd66",en:"Broccoli",fr:"Brocoli"},{id:8,emoji:"\ud83c\udf45",en:"Tomato",fr:"Tomate"},
+    {id:9,emoji:"\ud83e\udd54",en:"Potato",fr:"Pomme de terre"},{id:10,emoji:"\ud83c\udf3d",en:"Corn",fr:"Ma\u00efs"},
+    {id:11,emoji:"\ud83c\udf4b",en:"Lemon",fr:"Citron"},{id:12,emoji:"\ud83e\udd5d",en:"Kiwi",fr:"Kiwi"},
+    {id:13,emoji:"\ud83c\udf49",en:"Watermelon",fr:"Past\u00e8que"},{id:14,emoji:"\ud83e\udd51",en:"Avocado",fr:"Avocat"},
+    {id:15,emoji:"\ud83c\udf4d",en:"Pineapple",fr:"Ananas"},
   ],
   family:[
-    {id:1,emoji:"👨",en:"Father",fr:"Père"},
-    {id:2,emoji:"👩",en:"Mother",fr:"Mère"},
-    {id:3,emoji:"👦",en:"Brother",fr:"Frère"},
-    {id:4,emoji:"👧",en:"Sister",fr:"Sœur"},
-    {id:5,emoji:"👨‍👩‍👦",en:"Uncle (maternal)",fr:"Oncle maternel"},
-    {id:6,emoji:"👩‍👧",en:"Aunt (maternal)",fr:"Tante maternelle"},
-    {id:7,emoji:"🤵",en:"Uncle (paternal)",fr:"Oncle paternel"},
-    {id:8,emoji:"👰",en:"Aunt (paternal)",fr:"Tante paternelle"},
-    {id:9,emoji:"👴",en:"Grandfather",fr:"Grand-père"},
-    {id:10,emoji:"👵",en:"Grandmother",fr:"Grand-mère"},
+    {id:1,emoji:"\ud83d\udc68",en:"Father",fr:"P\u00e8re"},{id:2,emoji:"\ud83d\udc69",en:"Mother",fr:"M\u00e8re"},
+    {id:3,emoji:"\ud83d\udc66",en:"Brother",fr:"Fr\u00e8re"},{id:4,emoji:"\ud83d\udc67",en:"Sister",fr:"S\u0153ur"},
+    {id:5,emoji:"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc66",en:"Uncle (maternal)",fr:"Oncle maternel"},
+    {id:6,emoji:"\ud83d\udc69\u200d\ud83d\udc67",en:"Aunt (maternal)",fr:"Tante maternelle"},
+    {id:7,emoji:"\ud83e\udd35",en:"Uncle (paternal)",fr:"Oncle paternel"},
+    {id:8,emoji:"\ud83d\udc70",en:"Aunt (paternal)",fr:"Tante paternelle"},
+    {id:9,emoji:"\ud83d\udc74",en:"Grandfather",fr:"Grand-p\u00e8re"},
+    {id:10,emoji:"\ud83d\udc75",en:"Grandmother",fr:"Grand-m\u00e8re"},
+  ],
+  // \u2705 \u062c\u062f\u064a\u062f: \u0627\u0644\u0623\u0644\u0648\u0627\u0646 \u0648\u0627\u0644\u0623\u0634\u0643\u0627\u0644
+  colors:[
+    {id:1, emoji:"\ud83d\udd34", en:"Red",    fr:"Rouge",   hex:"#FF3B30"},
+    {id:2, emoji:"\ud83d\udd35", en:"Blue",   fr:"Bleu",    hex:"#007AFF"},
+    {id:3, emoji:"\ud83d\udfe2", en:"Green",  fr:"Vert",    hex:"#34C759"},
+    {id:4, emoji:"\ud83d\udfe1", en:"Yellow", fr:"Jaune",   hex:"#FFD60A"},
+    {id:5, emoji:"\ud83d\udfe0", en:"Orange", fr:"Orange",  hex:"#FF9F0A"},
+    {id:6, emoji:"\ud83d\udfe3", en:"Purple", fr:"Violet",  hex:"#AF52DE"},
+    {id:7, emoji:"\u26ab", en:"Black",  fr:"Noir",    hex:"#1C1C1E"},
+    {id:8, emoji:"\u26aa", en:"White",  fr:"Blanc",   hex:"#F2F2F7"},
+    {id:9, emoji:"\ud83d\udfe4", en:"Brown",  fr:"Marron",  hex:"#A2845E"},
+    {id:10,emoji:"\ud83e\ude77", en:"Pink",   fr:"Rose",    hex:"#FF375F"},
+    {id:11,emoji:"\ud83e\ude75", en:"Cyan",   fr:"Cyan",    hex:"#32ADE6"},
+    {id:12,emoji:"\ud83d\udfeb", en:"Beige",  fr:"Beige",   hex:"#D4A76A"},
+  ],
+  shapes:[
+    {id:1, emoji:"\u2b55", en:"Circle",    fr:"Cercle",     sides:0},
+    {id:2, emoji:"\ud83d\udfe5", en:"Square",    fr:"Carr\u00e9",      sides:4},
+    {id:3, emoji:"\ud83d\udd3a", en:"Triangle",  fr:"Triangle",   sides:3},
+    {id:4, emoji:"\ud83d\udd37", en:"Diamond",   fr:"Losange",    sides:4},
+    {id:5, emoji:"\u2b1b", en:"Rectangle", fr:"Rectangle",  sides:4},
+    {id:6, emoji:"\u2b50", en:"Star",      fr:"\u00c9toile",     sides:5},
+    {id:7, emoji:"\u2764\ufe0f", en:"Heart",     fr:"C\u0153ur",       sides:0},
+    {id:8, emoji:"\ud83d\udd36", en:"Hexagon",   fr:"Hexagone",   sides:6},
+    {id:9, emoji:"\ud83c\udf19", en:"Crescent",  fr:"Croissant",  sides:0},
+    {id:10,emoji:"\ud83d\udd3b", en:"Arrow",     fr:"Fl\u00e8che",     sides:3},
+  ],
+  // \u2705 \u062c\u062f\u064a\u062f: \u0623\u064a\u0627\u0645 \u0627\u0644\u0623\u0633\u0628\u0648\u0639
+  days:[
+    {id:1, emoji:"1\ufe0f\u20e3", en:"Monday",    fr:"Lundi",    num:"1"},
+    {id:2, emoji:"2\ufe0f\u20e3", en:"Tuesday",   fr:"Mardi",    num:"2"},
+    {id:3, emoji:"3\ufe0f\u20e3", en:"Wednesday", fr:"Mercredi", num:"3"},
+    {id:4, emoji:"4\ufe0f\u20e3", en:"Thursday",  fr:"Jeudi",    num:"4"},
+    {id:5, emoji:"5\ufe0f\u20e3", en:"Friday",    fr:"Vendredi", num:"5"},
+    {id:6, emoji:"6\ufe0f\u20e3", en:"Saturday",  fr:"Samedi",   num:"6"},
+    {id:7, emoji:"7\ufe0f\u20e3", en:"Sunday",    fr:"Dimanche", num:"7"},
+  ],
+  // \u2705 \u062c\u062f\u064a\u062f: \u0627\u0644\u0623\u0634\u0647\u0631
+  months:[
+    {id:1, emoji:"\u2744\ufe0f", en:"January",   fr:"Janvier"},
+    {id:2, emoji:"\ud83d\udc9d", en:"February",  fr:"F\u00e9vrier"},
+    {id:3, emoji:"\ud83c\udf38", en:"March",     fr:"Mars"},
+    {id:4, emoji:"\ud83c\udf27\ufe0f", en:"April",     fr:"Avril"},
+    {id:5, emoji:"\ud83c\udf3b", en:"May",       fr:"Mai"},
+    {id:6, emoji:"\u2600\ufe0f", en:"June",      fr:"Juin"},
+    {id:7, emoji:"\ud83c\udfd6\ufe0f", en:"July",      fr:"Juillet"},
+    {id:8, emoji:"\ud83c\udf0a", en:"August",    fr:"Ao\u00fbt"},
+    {id:9, emoji:"\ud83c\udf42", en:"September", fr:"Septembre"},
+    {id:10,emoji:"\ud83c\udf83", en:"October",   fr:"Octobre"},
+    {id:11,emoji:"\ud83c\udf41", en:"November",  fr:"Novembre"},
+    {id:12,emoji:"\ud83c\udf84", en:"December",  fr:"D\u00e9cembre"},
   ],
 };
 
-const CATEGORIES = [
-  {id:"numbers",labelEn:"Numbers",labelFr:"Chiffres",icon:"🔢",color:"#FF6B6B",bg:"#FFE5E5"},
-  {id:"letters",labelEn:"Letters",labelFr:"Lettres",icon:"🔤",color:"#4ECDC4",bg:"#E5FFFE"},
-  {id:"animals",labelEn:"Animals",labelFr:"Animaux",icon:"🦁",color:"#FFD93D",bg:"#FFF9E5"},
-  {id:"food",labelEn:"Fruits & Veggies",labelFr:"Fruits & Légumes",icon:"🍎",color:"#6BCB77",bg:"#E5F9E8"},
-  {id:"family",labelEn:"Family",labelFr:"Famille",icon:"👨‍👩‍👧‍👦",color:"#C77DFF",bg:"#F3E5FF"},
+const CATS=[
+  {id:"numbers", enL:"Numbers",         frL:"Chiffres",         icon:"\ud83d\udd22",color:"#FF6B6B",bg:"#FFE5E5"},
+  {id:"letters", enL:"Letters",          frL:"Lettres",          icon:"\ud83d\udd24",color:"#4ECDC4",bg:"#E5FFFE"},
+  {id:"animals", enL:"Animals",          frL:"Animaux",          icon:"\ud83e\udd81",color:"#FFD93D",bg:"#FFF9E5"},
+  {id:"food",    enL:"Fruits & Veggies", frL:"Fruits & L\u00e9gumes", icon:"\ud83c\udf4e",color:"#6BCB77",bg:"#E5F9E8"},
+  {id:"family",  enL:"Family",           frL:"Famille",          icon:"\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66",color:"#C77DFF",bg:"#F3E5FF"},
+  {id:"colors",  enL:"Colors",           frL:"Couleurs",         icon:"\ud83c\udfa8",color:"#FF9F0A",bg:"#FFF4E5"},
+  {id:"shapes",  enL:"Shapes",           frL:"Formes",           icon:"\u2b50",color:"#5E5CE6",bg:"#EEEEFF"},
+  {id:"days",    enL:"Days of Week",     frL:"Jours de la semaine",icon:"\ud83d\udcc5",color:"#30B0C7",bg:"#E5F7FA"},
+  {id:"months",  enL:"Months",           frL:"Mois de l'ann\u00e9e",  icon:"\ud83d\uddd3\ufe0f",color:"#FF6B9D",bg:"#FFE5F2"},
 ];
 
-const THEMES = [
-  {id:"rainbow",name:"🌈 Rainbow",primary:"#FF6B6B",secondary:"#4ECDC4",bg:"linear-gradient(135deg,#fff9f0,#f0f8ff)",card:"#ffffff"},
-  {id:"ocean",name:"🌊 Ocean",primary:"#0077B6",secondary:"#00B4D8",bg:"linear-gradient(135deg,#e8f4fd,#caf0f8)",card:"#ffffff"},
-  {id:"forest",name:"🌲 Forest",primary:"#2D6A4F",secondary:"#52B788",bg:"linear-gradient(135deg,#e9f5ee,#d8f3dc)",card:"#ffffff"},
-  {id:"sunset",name:"🌅 Sunset",primary:"#E63946",secondary:"#FF9F1C",bg:"linear-gradient(135deg,#fff3e0,#fce4ec)",card:"#ffffff"},
-  {id:"night",name:"🌙 Night",primary:"#7B2FBE",secondary:"#E040FB",bg:"linear-gradient(135deg,#1a1a2e,#16213e)",card:"#2a2a4a"},
+const THEMES=[
+  {id:"rainbow",name:"\ud83c\udf08 Rainbow",pri:"#FF6B6B",sec:"#4ECDC4",bg:"linear-gradient(135deg,#fff9f0,#f0f8ff)",card:"#ffffff"},
+  {id:"ocean",  name:"\ud83c\udf0a Ocean",  pri:"#0077B6",sec:"#00B4D8",bg:"linear-gradient(135deg,#e8f4fd,#caf0f8)",card:"#ffffff"},
+  {id:"forest", name:"\ud83c\udf32 Forest", pri:"#2D6A4F",sec:"#52B788",bg:"linear-gradient(135deg,#e9f5ee,#d8f3dc)",card:"#ffffff"},
+  {id:"sunset", name:"\ud83c\udf05 Sunset", pri:"#E63946",sec:"#FF9F1C",bg:"linear-gradient(135deg,#fff3e0,#fce4ec)",card:"#ffffff"},
+  {id:"night",  name:"\ud83c\udf19 Night",  pri:"#7B2FBE",sec:"#E040FB",bg:"linear-gradient(135deg,#1a1a2e,#16213e)",card:"#2a2a4a"},
 ];
 
-// ══════════════════════════════════════
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 // SPEECH
-// ══════════════════════════════════════
-function speak(text, lang="fr", gender="female") {
-  if(!window.speechSynthesis) return;
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+function speak(text,lang,gender){
+  if(!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang==="fr"?"fr-FR":"en-US";
-  u.rate = 0.85;
-  u.pitch = gender==="female"?1.2:0.8;
-  const voices = window.speechSynthesis.getVoices();
-  const lc = lang==="fr"?"fr":"en";
-  const hints = gender==="female"?["female","woman","girl"]:["male","man","boy"];
-  let v = voices.find(x=>x.lang.toLowerCase().startsWith(lc)&&hints.some(h=>x.name.toLowerCase().includes(h)));
-  if(!v) v = voices.find(x=>x.lang.toLowerCase().startsWith(lc));
-  if(v) u.voice = v;
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang==="fr"?"fr-FR":"en-US"; u.rate=0.82; u.pitch=gender==="female"?1.2:0.8;
+  const voices=window.speechSynthesis.getVoices();
+  const lc=lang==="fr"?"fr":"en";
+  const hints=gender==="female"?["female","woman","girl"]:["male","man","boy"];
+  let v=voices.find(x=>x.lang.toLowerCase().startsWith(lc)&&hints.some(h=>x.name.toLowerCase().includes(h)));
+  if(!v)v=voices.find(x=>x.lang.toLowerCase().startsWith(lc));
+  if(v)u.voice=v;
   window.speechSynthesis.speak(u);
 }
+function W(item,lang){return lang==="fr"?(item.fr||item.en):(item.en||item.fr);}
 
-// ══════════════════════════════════════
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+// TOGGLE
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+function Toggle({on,onChange,color="#4ECDC4"}){
+  return(
+    <div onClick={onChange} style={{width:52,height:28,borderRadius:14,background:on?color:"#ccc",cursor:"pointer",position:"relative",transition:"background 0.3s",flexShrink:0}}>
+      <div style={{position:"absolute",top:3,left:on?26:3,width:22,height:22,borderRadius:11,background:"#fff",transition:"left 0.3s",boxShadow:"0 2px 6px rgba(0,0,0,0.2)"}}/>
+    </div>
+  );
+}
+
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+// STAR BADGE
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+function StarBadge({count}){
+  return(
+    <div style={{display:"flex",gap:1}}>
+      {[1,2,3].map(i=>(
+        <span key={i} style={{fontSize:12,opacity:count>=i?1:0.2,filter:count>=i?"drop-shadow(0 0 3px gold)":"none"}}>\u2b50</span>
+      ))}
+    </div>
+  );
+}
+
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+// PROGRESS BAR
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+function ProgressBar({value,max,color}){
+  const pct=Math.round((value/max)*100);
+  return(
+    <div style={{background:"rgba(0,0,0,0.08)",borderRadius:10,height:8,overflow:"hidden",flex:1}}>
+      <div style={{background:color,height:"100%",width:pct+"%",borderRadius:10,transition:"width 0.6s ease"}}/>
+    </div>
+  );
+}
+
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 // QUIZ
-// ══════════════════════════════════════
-function QuizMode({category,lang,voiceGender,theme,onBack}) {
-  const items = DATA[category];
-  const [current,setCurrent]=useState(null);
-  const [options,setOptions]=useState([]);
-  const [selected,setSelected]=useState(null);
-  const [score,setScore]=useState(0);
-  const [total,setTotal]=useState(0);
-  const [done,setDone]=useState(false);
-  const cat=CATEGORIES.find(c=>c.id===category);
-  const night=theme.id==="night";
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+function QuizMode({category,S,onBack,onDone}){
+  const {lang,voiceGender,theme,soundFx}=S;
+  const items=DATA[category]; const cat=CATS.find(c=>c.id===category); const night=theme.id==="night";
+  const [cur,setCur]=useState(null);const [opts,setOpts]=useState([]);const [sel,setSel]=useState(null);
+  const [score,setScore]=useState(0);const [total,setTotal]=useState(0);const [done,setDone]=useState(false);
 
   function next(){
     const idx=Math.floor(Math.random()*items.length);
-    const c=items[idx];
-    setCurrent(c); setSelected(null);
+    const c=items[idx];setCur(c);setSel(null);
     const others=items.filter((_,i)=>i!==idx).sort(()=>Math.random()-0.5).slice(0,3);
-    setOptions([...others,c].sort(()=>Math.random()-0.5));
-    setTimeout(()=>speak(lang==="fr"?c.fr:c.en,lang,voiceGender),300);
+    setOpts([...others,c].sort(()=>Math.random()-0.5));
+    setTimeout(()=>speak(W(c,lang),lang,voiceGender),400);
   }
-
   useEffect(()=>{next();},[]);
 
   function answer(item){
-    if(selected) return;
-    setSelected(item);
-    const ok=item.id===current.id;
-    const nt=total+1, ns=ok?score+1:score;
-    setTotal(nt); setScore(ns);
-    speak(ok?"Bravo!":(lang==="fr"?current.fr:current.en),lang,voiceGender);
-    if(nt>=10) setTimeout(()=>setDone(true),1300);
-    else setTimeout(()=>next(),1300);
+    if(sel)return;setSel(item);
+    const ok=item.id===cur.id,nt=total+1,ns=ok?score+1:score;
+    setTotal(nt);setScore(ns);
+    if(ok){if(soundFx)playSuccess();speak(lang==="fr"?"Bravo!":"Well done!",lang,voiceGender);}
+    else  {if(soundFx)playError();  speak(W(cur,lang),lang,voiceGender);}
+    if(nt>=10)setTimeout(()=>setDone(true),1300);
+    else      setTimeout(()=>next(),1300);
   }
 
   if(done){
     const pct=Math.round((score/total)*100);
+    const stars=pct>=90?3:pct>=60?2:pct>=30?1:0;
+    onDone(score,stars);
     return(
-      <div style={{textAlign:"center",padding:32}}>
-        <div style={{fontSize:80}}>{pct>=80?"🏆":pct>=60?"🎉":"💪"}</div>
-        <div style={{fontSize:30,fontWeight:900,color:cat.color,fontFamily:"Nunito",marginTop:16}}>
-          {pct>=80?"Excellent!":pct>=60?(lang==="fr"?"Bien fait!":"Well done!"):(lang==="fr"?"Continue!":"Keep going!")}
+      <div style={{textAlign:"center",padding:32,animation:"fadeIn 0.4s ease"}}>
+        <div style={{fontSize:80}}>{pct>=80?"\ud83c\udfc6":pct>=50?"\ud83c\udf89":"\ud83d\udcaa"}</div>
+        <div style={{fontSize:28,fontWeight:900,color:cat.color,fontFamily:"Nunito",marginTop:14}}>
+          {pct>=80?"Excellent!":pct>=50?(lang==="fr"?"Bien fait!":"Well done!"):(lang==="fr"?"Continue!":"Keep going!")}
         </div>
-        <div style={{fontSize:22,fontWeight:700,color:night?"#fff":"#555",fontFamily:"Nunito",marginTop:8}}>
-          {score}/{total} {lang==="fr"?"bonnes réponses":"correct answers"}
+        <div style={{fontSize:20,fontWeight:700,color:night?"#fff":"#555",fontFamily:"Nunito",marginTop:8}}>
+          {score}/{total} {lang==="fr"?"bonnes r\u00e9ponses":"correct"}
         </div>
-        <div style={{display:"flex",gap:12,justifyContent:"center",marginTop:24}}>
+        <div style={{display:"flex",gap:4,justifyContent:"center",marginTop:10}}>
+          {[1,2,3].map(i=><span key={i} style={{fontSize:32,opacity:stars>=i?1:0.2,filter:stars>=i?"drop-shadow(0 0 6px gold)":"none"}}>\u2b50</span>)}
+        </div>
+        <div style={{display:"flex",gap:12,justifyContent:"center",marginTop:22}}>
           <button onClick={()=>{setScore(0);setTotal(0);setDone(false);next();}}
-            style={{background:cat.color,color:"#fff",border:"none",borderRadius:16,padding:"14px 24px",fontSize:16,fontWeight:800,cursor:"pointer",fontFamily:"Nunito"}}>
-            🔄 {lang==="fr"?"Rejouer":"Play Again"}
+            style={{background:cat.color,color:"#fff",border:"none",borderRadius:16,padding:"13px 22px",fontSize:15,fontWeight:800,cursor:"pointer",fontFamily:"Nunito"}}>
+            \ud83d\udd04 {lang==="fr"?"Rejouer":"Play Again"}
           </button>
-          <button onClick={onBack}
-            style={{background:night?"#444":"#eee",color:night?"#fff":"#555",border:"none",borderRadius:16,padding:"14px 24px",fontSize:16,fontWeight:800,cursor:"pointer",fontFamily:"Nunito"}}>
-            ← {lang==="fr"?"Retour":"Back"}
+          <button onClick={onBack} style={{background:night?"#444":"#eee",color:night?"#fff":"#555",border:"none",borderRadius:16,padding:"13px 22px",fontSize:15,fontWeight:800,cursor:"pointer",fontFamily:"Nunito"}}>
+            \u2190 {lang==="fr"?"Retour":"Back"}
           </button>
         </div>
       </div>
     );
   }
-  if(!current) return null;
+  if(!cur)return null;
+
+  // Special display for colors
+  const isColor=category==="colors";
 
   return(
     <div style={{padding:16}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
-        <div style={{fontSize:15,fontWeight:700,color:night?"#ccc":"#666",fontFamily:"Nunito"}}>Q {total+1}/10</div>
-        <div style={{background:cat.color+"22",borderRadius:20,padding:"6px 16px",fontSize:15,fontWeight:800,color:cat.color,fontFamily:"Nunito"}}>⭐ {score}</div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+        <span style={{fontSize:14,fontWeight:700,color:night?"#ccc":"#666",fontFamily:"Nunito"}}>Q {total+1}/10</span>
+        <span style={{background:cat.color+"22",borderRadius:20,padding:"5px 14px",fontSize:14,fontWeight:800,color:cat.color,fontFamily:"Nunito"}}>\u2b50 {score}</span>
       </div>
-      <div style={{textAlign:"center",marginBottom:20}}>
-        <div style={{fontSize:14,fontWeight:700,color:night?"#ddd":"#666",fontFamily:"Nunito",marginBottom:10}}>
-          {lang==="fr"?"Quelle image correspond à :":"Which picture matches:"}
+      <div style={{textAlign:"center",marginBottom:16}}>
+        <div style={{fontSize:13,fontWeight:700,color:night?"#ddd":"#666",fontFamily:"Nunito",marginBottom:8}}>
+          {lang==="fr"?"Quelle image correspond \u00e0 :":"Which picture matches:"}
         </div>
         <div style={{background:cat.color,color:"#fff",borderRadius:20,padding:"12px 28px",fontSize:24,fontWeight:900,fontFamily:"Nunito",display:"inline-block",boxShadow:`0 6px 20px ${cat.color}60`}}>
-          {lang==="fr"?current.fr:current.en}
+          {W(cur,lang)}
         </div>
-        <button onClick={()=>speak(lang==="fr"?current.fr:current.en,lang,voiceGender)}
-          style={{display:"block",margin:"10px auto 0",background:"transparent",border:"none",fontSize:26,cursor:"pointer"}}>🔊</button>
+        <button onClick={()=>speak(W(cur,lang),lang,voiceGender)} style={{display:"block",margin:"10px auto 0",background:"transparent",border:"none",fontSize:26,cursor:"pointer"}}>\ud83d\udd0a</button>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-        {options.map(opt=>{
-          const ok=opt.id===current.id, chosen=selected?.id===opt.id;
-          let bg=theme.card, bdr=night?"3px solid #444":"3px solid #eee";
-          if(selected){if(ok){bg="#6BCB77";bdr="3px solid #4aa85c";}else if(chosen){bg="#FF6B6B";bdr="3px solid #d94f4f";}}
+        {opts.map(opt=>{
+          const ok=opt.id===cur.id,ch=sel?.id===opt.id;
+          let bg=theme.card,bdr=night?"3px solid #444":"3px solid #eee";
+          if(sel){if(ok){bg="#6BCB77";bdr="3px solid #4aa85c";}else if(ch){bg="#FF6B6B";bdr="3px solid #d94f4f";}}
           return(
             <div key={opt.id} onClick={()=>answer(opt)}
-              style={{background:bg,borderRadius:18,padding:16,display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:selected?"default":"pointer",border:bdr,transition:"all 0.2s"}}>
-              <div style={{fontSize:42}}>{opt.emoji}</div>
-              <div style={{fontSize:14,fontWeight:800,color:selected&&(ok||chosen)?"#fff":night?"#fff":"#333",fontFamily:"Nunito",textAlign:"center"}}>
-                {opt.num||(lang==="fr"?opt.fr:opt.en)}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ══════════════════════════════════════
-// CATEGORY VIEW
-// ══════════════════════════════════════
-function CategoryView({category,lang,voiceGender,theme,onBack}){
-  const [activeId,setActiveId]=useState(null);
-  const [mode,setMode]=useState("learn");
-  const items=DATA[category];
-  const cat=CATEGORIES.find(c=>c.id===category);
-  const night=theme.id==="night";
-
-  if(mode==="quiz") return(
-    <div>
-      <div style={{display:"flex",alignItems:"center",gap:12,padding:"16px 16px 0"}}>
-        <button onClick={()=>setMode("learn")} style={{background:"transparent",border:"none",fontSize:22,cursor:"pointer"}}>←</button>
-        <div style={{fontSize:20,fontWeight:900,color:night?"#fff":"#2d2d2d",fontFamily:"Nunito"}}>{cat.icon} Quiz</div>
-      </div>
-      <QuizMode category={category} lang={lang} voiceGender={voiceGender} theme={theme} onBack={()=>setMode("learn")}/>
-    </div>
-  );
-
-  return(
-    <div>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 16px 8px"}}>
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <button onClick={onBack} style={{background:"transparent",border:"none",fontSize:22,cursor:"pointer"}}>←</button>
-          <div style={{fontSize:21,fontWeight:900,color:night?"#fff":"#2d2d2d",fontFamily:"Nunito"}}>{cat.icon} {lang==="fr"?cat.labelFr:cat.labelEn}</div>
-        </div>
-        <button onClick={()=>setMode("quiz")}
-          style={{background:cat.color,color:"#fff",border:"none",borderRadius:14,padding:"8px 16px",fontSize:13,fontWeight:800,cursor:"pointer",fontFamily:"Nunito",boxShadow:`0 4px 12px ${cat.color}50`}}>
-          🎮 Quiz
-        </button>
-      </div>
-      <div style={{padding:"8px 16px 80px",display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(120px,1fr))",gap:10}}>
-        {items.map(item=>{
-          const active=activeId===item.id;
-          return(
-            <div key={item.id} onClick={()=>{setActiveId(item.id);speak(lang==="fr"?item.fr:item.en,lang,voiceGender);}}
-              style={{background:active?cat.color:theme.card,borderRadius:18,padding:"16px 12px",display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:"pointer",
-                transform:active?"scale(1.07)":"scale(1)",boxShadow:active?`0 8px 20px ${cat.color}80`:night?"0 3px 10px rgba(0,0,0,0.4)":"0 3px 10px rgba(0,0,0,0.08)",
-                transition:"all 0.25s cubic-bezier(0.34,1.56,0.64,1)",border:active?`3px solid ${cat.color}`:night?"3px solid #444":"3px solid #f0f0f0"}}>
-              <div style={{fontSize:40}}>{item.emoji}</div>
-              <div style={{fontSize:17,fontWeight:800,color:active?"#fff":night?"#fff":"#2d2d2d",fontFamily:"Nunito",textAlign:"center",lineHeight:1.2}}>{item.num||item.en}</div>
-              {item.num&&<div style={{fontSize:12,fontWeight:700,color:active?"rgba(255,255,255,0.9)":cat.color,fontFamily:"Nunito"}}>{lang==="fr"?item.fr:item.en}</div>}
-              <div style={{fontSize:10,color:active?"rgba(255,255,255,0.7)":night?"#aaa":"#bbb",fontFamily:"Nunito"}}>🔊 tap</div>
-            </div>
-          );
-        })}
-      </div>
-      {activeId&&(
-        <div style={{position:"fixed",bottom:20,left:"50%",transform:"translateX(-50%)",background:cat.color,color:"#fff",borderRadius:20,padding:"12px 24px",fontSize:20,fontWeight:900,fontFamily:"Nunito",boxShadow:`0 8px 24px ${cat.color}70`,animation:"slideUp 0.3s ease",whiteSpace:"nowrap",zIndex:100}}>
-          {(()=>{const it=items.find(i=>i.id===activeId);return`${it?.emoji} ${lang==="fr"?it?.fr:it?.en}`;})()}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ══════════════════════════════════════
-// SETTINGS
-// ══════════════════════════════════════
-function SettingsView({settings,onSave,onBack}){
-  const [s,setS]=useState(settings);
-  const night=s.theme.id==="night";
-  return(
-    <div style={{padding:16}}>
-      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:22}}>
-        <button onClick={onBack} style={{background:"transparent",border:"none",fontSize:22,cursor:"pointer"}}>←</button>
-        <div style={{fontSize:22,fontWeight:900,color:night?"#fff":"#2d2d2d",fontFamily:"Nunito"}}>⚙️ {s.lang==="fr"?"Paramètres":"Settings"}</div>
-      </div>
-
-      <div style={{marginBottom:22}}>
-        <div style={{fontSize:14,fontWeight:800,color:night?"#ccc":"#666",fontFamily:"Nunito",marginBottom:8}}>🌍 {s.lang==="fr"?"Langue":"Language"}</div>
-        <div style={{display:"flex",gap:10}}>
-          {["en","fr"].map(l=>(
-            <button key={l} onClick={()=>setS(p=>({...p,lang:l}))}
-              style={{flex:1,background:s.lang===l?"#4ECDC4":night?"#333":"#f5f5f5",color:s.lang===l?"#fff":night?"#ddd":"#555",border:"none",borderRadius:14,padding:"14px 0",fontSize:17,fontWeight:800,cursor:"pointer",fontFamily:"Nunito",transition:"all 0.2s"}}>
-              {l==="en"?"🇬🇧 English":"🇫🇷 Français"}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div style={{marginBottom:22}}>
-        <div style={{fontSize:14,fontWeight:800,color:night?"#ccc":"#666",fontFamily:"Nunito",marginBottom:8}}>🎙️ {s.lang==="fr"?"Voix":"Voice"}</div>
-        <div style={{display:"flex",gap:10}}>
-          {[["female","👩 "+(s.lang==="fr"?"Femme":"Female")],["male","👨 "+(s.lang==="fr"?"Homme":"Male")]].map(([v,label])=>(
-            <button key={v} onClick={()=>setS(p=>({...p,voiceGender:v}))}
-              style={{flex:1,background:s.voiceGender===v?"#C77DFF":night?"#333":"#f5f5f5",color:s.voiceGender===v?"#fff":night?"#ddd":"#555",border:"none",borderRadius:14,padding:"14px 0",fontSize:15,fontWeight:800,cursor:"pointer",fontFamily:"Nunito",transition:"all 0.2s"}}>
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div style={{marginBottom:28}}>
-        <div style={{fontSize:14,fontWeight:800,color:night?"#ccc":"#666",fontFamily:"Nunito",marginBottom:8}}>🎨 {s.lang==="fr"?"Thème":"Theme"}</div>
-        <div style={{display:"flex",flexDirection:"column",gap:8}}>
-          {THEMES.map(t=>(
-            <button key={t.id} onClick={()=>setS(p=>({...p,theme:t}))}
-              style={{background:s.theme.id===t.id?t.primary:night?"#333":"#f5f5f5",color:s.theme.id===t.id?"#fff":night?"#ddd":"#555",border:s.theme.id===t.id?`3px solid ${t.primary}`:"3px solid transparent",borderRadius:14,padding:"12px 20px",fontSize:15,fontWeight:800,cursor:"pointer",fontFamily:"Nunito",textAlign:"left",transition:"all 0.2s"}}>
-              {t.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <button onClick={()=>onSave(s)}
-        style={{width:"100%",background:"linear-gradient(135deg,#FF6B6B,#FF8E53)",color:"#fff",border:"none",borderRadius:18,padding:"16px 0",fontSize:18,fontWeight:900,cursor:"pointer",fontFamily:"Nunito",boxShadow:"0 6px 20px rgba(255,107,107,0.4)"}}>
-        ✅ {s.lang==="fr"?"Enregistrer":"Save"}
-      </button>
-    </div>
-  );
-}
-
-// ══════════════════════════════════════
-// ABOUT
-// ══════════════════════════════════════
-function AboutView({lang,theme,onBack}){
-  const night=theme.id==="night";
-  const info=[
-    {icon:"🎯",en:"Purpose",fr:"Objectif",ten:"Educational app for children to learn French & English.",tfr:"Application éducative pour apprendre le français et l'anglais."},
-    {icon:"👶",en:"Target Age",fr:"Âge cible",ten:"Designed for children aged 3–8 years.",tfr:"Conçue pour les enfants de 3 à 8 ans."},
-    {icon:"🔊",en:"Voice",fr:"Voix",ten:"Uses your device's text-to-speech for pronunciation.",tfr:"Utilise la synthèse vocale pour la prononciation."},
-    {icon:"🏆",en:"Method",fr:"Méthode",ten:"Learn with cards, then test yourself with quizzes!",tfr:"Apprenez avec des cartes, puis testez-vous avec des quiz!"},
-  ];
-  return(
-    <div style={{padding:20}}>
-      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:22}}>
-        <button onClick={onBack} style={{background:"transparent",border:"none",fontSize:22,cursor:"pointer"}}>←</button>
-        <div style={{fontSize:22,fontWeight:900,color:night?"#fff":"#2d2d2d",fontFamily:"Nunito"}}>ℹ️ {lang==="fr"?"À propos":"About"}</div>
-      </div>
-      <div style={{textAlign:"center",marginBottom:24}}>
-        <div style={{fontSize:70}}>🎓</div>
-        <div style={{fontSize:28,fontWeight:900,color:theme.primary,fontFamily:"Nunito"}}>KidLearn</div>
-        <div style={{fontSize:13,color:night?"#aaa":"#999",fontFamily:"Nunito",marginTop:4}}>v1.0.0</div>
-      </div>
-      {info.map((item,i)=>(
-        <div key={i} style={{background:night?"#2a2a4a":"#f9f9f9",borderRadius:16,padding:14,marginBottom:10,display:"flex",gap:12,alignItems:"flex-start"}}>
-          <div style={{fontSize:26}}>{item.icon}</div>
-          <div>
-            <div style={{fontSize:14,fontWeight:900,color:night?"#fff":"#333",fontFamily:"Nunito"}}>{lang==="fr"?item.fr:item.en}</div>
-            <div style={{fontSize:12,color:night?"#bbb":"#666",fontFamily:"Nunito",lineHeight:1.5,marginTop:3}}>{lang==="fr"?item.tfr:item.ten}</div>
-          </div>
-        </div>
-      ))}
-      <div style={{textAlign:"center",marginTop:20,fontSize:13,color:night?"#666":"#ccc",fontFamily:"Nunito"}}>Made with ❤️ for little learners</div>
-    </div>
-  );
-}
-
-// ══════════════════════════════════════
-// MENU
-// ══════════════════════════════════════
-function MenuView({onSelect,lang,theme}){
-  const night=theme.id==="night";
-  return(
-    <div style={{padding:16}}>
-      <div style={{textAlign:"center",marginBottom:20}}>
-        <div style={{fontSize:22,fontWeight:900,color:night?"#fff":"#2d2d2d",fontFamily:"Nunito"}}>
-          {lang==="fr"?"Que veux-tu apprendre?":"What do you want to learn?"}
-        </div>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:12}}>
-        {CATEGORIES.map(cat=>(
-          <button key={cat.id} onClick={()=>onSelect(cat.id)}
-            style={{background:cat.bg,border:`3px solid ${cat.color}30`,borderRadius:20,padding:"16px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",width:"100%",textAlign:"left",transition:"transform 0.2s"}}>
-            <div style={{fontSize:40,minWidth:48,textAlign:"center"}}>{cat.icon}</div>
-            <div>
-              <div style={{fontSize:18,fontWeight:900,color:cat.color,fontFamily:"Nunito"}}>{lang==="fr"?cat.labelFr:cat.labelEn}</div>
-              <div style={{fontSize:11,color:"#999",fontFamily:"Nunito",marginTop:2}}>{DATA[cat.id].length} {lang==="fr"?"éléments":"items"}</div>
-            </div>
-            <div style={{marginLeft:"auto",fontSize:20,color:cat.color}}>→</div>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ══════════════════════════════════════
-// SPLASH
-// ══════════════════════════════════════
-function SplashView({settings,onStart,onSettings,onAbout}){
-  const {lang,theme}=settings;
-  const night=theme.id==="night";
-  const [b,setB]=useState(false);
-  useEffect(()=>{const t=setInterval(()=>setB(x=>!x),1800);return()=>clearInterval(t);},[]);
-  return(
-    <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",padding:24,textAlign:"center"}}>
-      <div style={{fontSize:86,transition:"transform 0.4s cubic-bezier(0.34,1.56,0.64,1)",transform:b?"scale(1.12) rotate(5deg)":"scale(1) rotate(-3deg)"}}>🎓</div>
-      <div style={{fontSize:36,fontWeight:900,color:theme.primary,fontFamily:"Nunito",letterSpacing:-1,marginBottom:4,marginTop:8}}>KidLearn</div>
-      <div style={{fontSize:14,color:night?"#aaa":"#888",fontFamily:"Nunito",marginBottom:36}}>
-        {lang==="fr"?"Apprends le français et l'anglais! 🌍":"Learn French & English! 🌍"}
-      </div>
-      <button onClick={onStart}
-        style={{background:`linear-gradient(135deg,${theme.primary},${theme.secondary})`,color:"#fff",border:"none",borderRadius:24,padding:"18px 60px",fontSize:22,fontWeight:900,cursor:"pointer",fontFamily:"Nunito",boxShadow:`0 8px 28px ${theme.primary}60`,marginBottom:28,letterSpacing:0.5}}>
-        🚀 {lang==="fr"?"Commencer":"Start"}
-      </button>
-      <div style={{display:"flex",gap:12}}>
-        <button onClick={onSettings} style={{background:night?"#2a2a4a":"#f5f5f5",color:night?"#ddd":"#555",border:"none",borderRadius:16,padding:"12px 18px",fontSize:14,fontWeight:800,cursor:"pointer",fontFamily:"Nunito"}}>⚙️ {lang==="fr"?"Paramètres":"Settings"}</button>
-        <button onClick={onAbout} style={{background:night?"#2a2a4a":"#f5f5f5",color:night?"#ddd":"#555",border:"none",borderRadius:16,padding:"12px 18px",fontSize:14,fontWeight:800,cursor:"pointer",fontFamily:"Nunito"}}>ℹ️ {lang==="fr"?"À propos":"About"}</button>
-      </div>
-      <div style={{marginTop:36,display:"flex",gap:10}}>
-        {["🔢","🔤","🦁","🍎","👨‍👩‍👧‍👦"].map((e,i)=>(
-          <div key={i} style={{fontSize:26,opacity:0.55,animation:`float ${1.5+i*0.2}s ease-in-out infinite alternate`,animationDelay:`${i*0.15}s`}}>{e}</div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ══════════════════════════════════════
-// APP ROOT
-// ══════════════════════════════════════
-function App(){
-  const [view,setView]=useState("splash");
-  const [cat,setCat]=useState(null);
-  const [settings,setSettings]=useState({lang:"fr",voiceGender:"female",theme:THEMES[0]});
-  useEffect(()=>{window.speechSynthesis?.getVoices();window.speechSynthesis?.addEventListener?.("voiceschanged",()=>window.speechSynthesis?.getVoices());},[]);
-
-  const {theme}=settings;
-  const night=theme.id==="night";
-
-  return(
-    <div style={{minHeight:"100vh",background:theme.bg,display:"flex",justifyContent:"center"}}>
-      <div style={{width:"100%",maxWidth:480,minHeight:"100vh",background:night?"rgba(26,26,46,0.97)":"rgba(255,255,255,0.93)",backdropFilter:"blur(20px)"}}>
-
-        {/* Top bar */}
-        {view==="menu"&&(
-          <div style={{display:"flex",alignItems:"center",padding:"14px 16px",borderBottom:night?"1px solid #333":"1px solid #f0f0f0",gap:10}}>
-            <button onClick={()=>setView("splash")} style={{background:"transparent",border:"none",fontSize:22,cursor:"pointer"}}>🏠</button>
-            <div style={{flex:1,fontSize:18,fontWeight:900,color:night?"#fff":"#2d2d2d",fontFamily:"Nunito"}}>KidLearn</div>
-            <span style={{fontSize:22,cursor:"pointer"}} onClick={()=>setView("settings")}>⚙️</span>
-          </div>
-        )}
-
-        <div style={{overflowY:"auto"}}>
-          {view==="splash"&&<SplashView settings={settings} onStart={()=>setView("menu")} onSettings={()=>setView("settings")} onAbout={()=>setView("about")}/>}
-          {view==="menu"&&<MenuView lang={settings.lang} theme={settings.theme} onSelect={c=>{setCat(c);setView("category");}}/>}
-          {view==="category"&&cat&&<CategoryView category={cat} lang={settings.lang} voiceGender={settings.voiceGender} theme={settings.theme} onBack={()=>setView("menu")}/>}
-          {view==="settings"&&<SettingsView settings={settings} onSave={s=>{setSettings(s);setView("splash");}} onBack={()=>setView("splash")}/>}
-          {view==="about"&&<AboutView lang={settings.lang} theme={settings.theme} onBack={()=>setView("splash")}/>}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
-</script>
-</body>
-</html>
+              style={{background:bg,borderRadius:18,padding:16,display:"flex",flexDirection:"column",alignItems:"center",gap:8,cursor:sel?"default":"pointer",border:bdr,transition:"all 0.2s"}}>
+              {isColor
+                ? <div style={{width:56,height:56,borderRadius:12,background
